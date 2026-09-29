@@ -1,0 +1,11 @@
+yaml
+site_name: Project Zomboid AutoWiki
+site_url: https://github.io
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: red
+nav:
+  - Home: index.md
+  - Items & Weapons: weapons.md
