@@ -1,0 +1,38 @@
+yaml
+name: Project Zomboid AutoWiki Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Executes automatically once a week (Every Sunday at midnight UTC)
+  workflow_dispatch: # Keeps the manual button active so you can test it anytime
+
+permissions:
+  contents: write
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python Runtime Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          pip install google-generativeai requests mkdocs-material
+
+      - name: Execute AutoWiki Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python autowiki_core.py
+
+      - name: Deploy Wiki Site via GitHub Pages
+        run: |
+          git config --global user.name "USAG-AutoWiki-Bot"
+          git config --global user.email "bot@autowiki.local"
+          mkdocs gh-deploy --force
